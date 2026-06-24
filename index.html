@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cohort Build-Readiness Screener | VentureOS AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --surface:#F7F8F5;
+  --surface-card:#FFFFFF;
+  --ink:#1C2B24;
+  --ink-light:#4A5E53;
+  --ink-faint:#8A9E93;
+  --accent:#2E6B4F;
+  --accent-light:#E6F0EA;
+  --amber:#A67C00;
+  --amber-light:#FBF5E0;
+  --red:#B04030;
+  --red-light:#F7ECEA;
+  --border:#D8DDD9;
+  --border-strong:#B8C0BA;
+  --radius:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--surface);
+  color:var(--ink);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+
+/* TOPBAR */
+.topbar{
+  background:var(--ink);
+  color:#fff;
+  padding:10px 28px;
+  font-size:11.5px;
+  letter-spacing:.04em;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.topbar a{color:#fff;text-decoration:none;opacity:.75;}
+.topbar a:hover{opacity:1;}
+
+/* HEADER */
+.header{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:40px 28px 32px;
+}
+.header-inner{max-width:1100px;margin:0 auto;}
+.eyebrow{
+  font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:'';width:18px;height:1.5px;background:var(--accent);}
+.header h1{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(26px,3.8vw,40px);
+  font-weight:400;
+  line-height:1.15;
+  color:var(--ink);
+  max-width:680px;
+  margin-bottom:12px;
+}
+.header h1 em{
+  font-style:italic;
+  color:var(--accent);
+}
+.header p{
+  font-size:15px;color:var(--ink-light);max-width:520px;line-height:1.65;
+}
+
+/* MAIN LAYOUT */
+.main{max-width:1100px;margin:0 auto;padding:32px 28px 80px;}
+
+/* INPUT PANEL */
+.input-panel{
+  background:var(--surface-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:28px;
+  margin-bottom:28px;
+}
+.input-panel-head{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  margin-bottom:22px;flex-wrap:wrap;gap:12px;
+}
+.input-panel-head h2{
+  font-family:'Instrument Serif',serif;
+  font-size:20px;font-weight:400;color:var(--ink);
+}
+.input-panel-head .sub{font-size:13px;color:var(--ink-faint);margin-top:3px;}
+
+.applicant-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;
+  margin-bottom:18px;
+}
+.applicant-card{
+  border:1px solid var(--border);border-radius:6px;padding:14px;
+  background:var(--surface);position:relative;
+}
+.applicant-card label{
+  display:block;font-size:11px;font-weight:600;color:var(--ink-faint);
+  text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;
+}
+.applicant-card textarea{
+  width:100%;border:none;background:transparent;
+  font-family:'Inter',sans-serif;font-size:13.5px;color:var(--ink);
+  resize:none;min-height:72px;outline:none;line-height:1.5;
+}
+.applicant-card textarea::placeholder{color:var(--ink-faint);}
+.applicant-card .remove-btn{
+  position:absolute;top:10px;right:10px;
+  background:none;border:none;color:var(--border-strong);cursor:pointer;
+  font-size:16px;line-height:1;padding:2px 5px;border-radius:3px;
+}
+.applicant-card .remove-btn:hover{color:var(--red);background:var(--red-light);}
+
+.panel-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+
+.btn{
+  font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;
+  padding:10px 20px;border-radius:6px;border:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;transition:opacity .1s;
+}
+.btn:hover{opacity:.88;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-ghost{
+  background:none;border:1px solid var(--border-strong);color:var(--ink-light);
+}
+
+/* RESULTS */
+.results-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:18px;flex-wrap:wrap;gap:10px;
+}
+.results-head h2{
+  font-family:'Instrument Serif',serif;font-size:20px;font-weight:400;
+}
+.results-meta{font-size:12.5px;color:var(--ink-faint);}
+
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:18px;
+}
+
+/* SCORECARD */
+.scorecard{
+  background:var(--surface-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.scorecard-header{
+  padding:18px 20px 14px;
+  border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+}
+.scorecard-header h3{
+  font-family:'Instrument Serif',serif;
+  font-size:17px;font-weight:400;color:var(--ink);
+}
+.score-badge{
+  font-size:11px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:4px 10px;border-radius:20px;white-space:nowrap;
+  flex-shrink:0;
+}
+.score-ready{background:var(--accent-light);color:var(--accent);}
+.score-soon{background:var(--amber-light);color:var(--amber);}
+.score-far{background:var(--red-light);color:var(--red);}
+
+/* READINESS RAIL — the signature element */
+.rail-wrap{padding:16px 20px 12px;}
+.rail-label-row{
+  display:flex;justify-content:space-between;
+  font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:6px;
+}
+.rail{
+  display:flex;gap:3px;height:10px;border-radius:5px;overflow:hidden;
+}
+.rail-segment{
+  flex:1;height:100%;border-radius:2px;
+  background:var(--border);transition:background .4s ease;
+}
+.rail-segment.lit-clear{background:var(--accent);}
+.rail-segment.lit-partial{background:var(--amber);}
+.rail-segment.lit-gap{background:var(--red);}
+
+.weeks-line{
+  font-size:12px;color:var(--ink-faint);margin-top:8px;
+  font-style:italic;
+}
+
+/* GAPS LIST */
+.gaps{padding:0 20px 18px;}
+.gap-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;
+}
+.gap-item:last-child{border-bottom:none;}
+.gap-dot{
+  width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;
+}
+.dot-clear{background:var(--accent);}
+.dot-partial{background:var(--amber);}
+.dot-gap{background:var(--red);}
+.gap-name{font-weight:600;color:var(--ink);min-width:90px;}
+.gap-note{color:var(--ink-light);line-height:1.45;}
+
+/* VERDICT */
+.verdict{
+  margin:0 20px 18px;padding:12px 14px;
+  border-radius:6px;font-size:13px;line-height:1.55;
+  border-left:3px solid var(--accent);
+  background:var(--accent-light);color:var(--ink);
+}
+.verdict.warn{border-left-color:var(--amber);background:var(--amber-light);}
+.verdict.alert{border-left-color:var(--red);background:var(--red-light);}
+
+/* EMPTY STATE */
+.empty{
+  text-align:center;padding:60px 24px;color:var(--ink-faint);
+  background:var(--surface-card);border:1px solid var(--border);
+  border-radius:var(--radius);
+}
+.empty .icon{font-size:28px;margin-bottom:14px;opacity:.5;}
+.empty p{font-size:14px;max-width:340px;margin:0 auto;line-height:1.6;}
+
+footer{
+  border-top:1px solid var(--border);
+  padding:28px;text-align:center;
+  font-size:11.5px;color:var(--ink-faint);line-height:1.9;
+}
+footer strong{color:var(--ink-light);}
+
+@media(max-width:600px){
+  .header{padding:28px 18px 24px;}
+  .main{padding:24px 18px 60px;}
+  .input-panel{padding:20px 18px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span>VentureOS AI · Free Tool · Cohort Build-Readiness Screener</span>
+  <a href="https://ventureosai.com" target="_blank">ventureosai.com →</a>
+</div>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="eyebrow">For programme directors &amp; selection committees</div>
+    <h1>Find out which shortlisted applicants are <em>actually ready</em> to start accelerating on day one.</h1>
+    <p>Paste in each applicant's business description as written in their application. The screener scores them on five build-readiness markers and tells you how many weeks of programme time each one will spend on setup instead of acceleration.</p>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="input-panel">
+    <div class="input-panel-head">
+      <div>
+        <h2>Add your shortlisted applicants</h2>
+        <div class="sub">One description per applicant — paste from their application, one or two sentences is enough.</div>
+      </div>
+    </div>
+
+    <div class="applicant-grid" id="applicantGrid">
+      <div class="applicant-card">
+        <label>Applicant 1</label>
+        <textarea class="applicant-input" placeholder="e.g. AI tool that helps nurses cut documentation time by 60%, targeting NHS trusts, priced at £299/month per ward"></textarea>
+      </div>
+      <div class="applicant-card">
+        <label>Applicant 2</label>
+        <textarea class="applicant-input" placeholder="e.g. A marketplace connecting rural farmers to buyers"></textarea>
+      </div>
+    </div>
+
+    <div class="panel-actions">
+      <button class="btn btn-primary" id="scoreBtn">▶ Score this cohort</button>
+      <button class="btn btn-ghost" id="addBtn">+ Add applicant</button>
+      <button class="btn btn-ghost" id="clearBtn">Clear all</button>
+    </div>
+  </div>
+
+  <div id="resultsSection">
+    <div class="empty">
+      <div class="icon">⟡</div>
+      <p>Add your shortlisted applicants above and click "Score this cohort" to see build-readiness results.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <strong>VentureOS AI</strong> · Free Cohort Build-Readiness Screener · ventureosai.com<br>
+  Mohammad Bukkar | Economic Systems Architect &amp; Founder — Sceamdo · VentureOS AI · Bukkar Ltd.
+</footer>
+
+<script>
+const GATES = [
+  {
+    key:'structure',
+    name:'Legal structure',
+    signals:['register','llc','ltd','limited','incorporat','entity','company','plc','llp'],
+    notes:{
+      clear:'Legal structure appears defined or registration mentioned.',
+      partial:'Entity type implied but not confirmed or named.',
+      gap:'No legal structure or registration mentioned — entity formation not yet started.'
+    }
+  },
+  {
+    key:'positioning',
+    name:'Positioning',
+    signals:['for ','targets ','serves ','built for','focused on','aimed at','help ','helping ','designed for','used by'],
+    notes:{
+      clear:'Clear target audience or positioning stated.',
+      partial:'Audience implied but positioning is not sharp.',
+      gap:'No defined target customer or positioning statement.'
+    }
+  },
+  {
+    key:'pricing',
+    name:'Pricing model',
+    signals:['£','$','€','price','pricing','/month','/mo','/year','/yr','subscription','fee','charge','revenue','pay','paid','one-time','saas','freemium'],
+    notes:{
+      clear:'Pricing or revenue model appears defined.',
+      partial:'Revenue intent implied but no model or figures stated.',
+      gap:'No pricing model or revenue approach mentioned.'
+    }
+  },
+  {
+    key:'brand',
+    name:'Brand & name',
+    signals:['"',"'called ","named ","brand",'logo','identity','known as'],
+    notes:{
+      clear:'Business name or brand appears defined.',
+      partial:'Concept named informally — no brand system evident.',
+      gap:'No business name or brand identity given.'
+    }
+  },
+  {
+    key:'offer',
+    name:'Concrete offer',
+    signals:['tool','app','platform','service','product','software','system','solution','marketplace','device','hardware'],
+    notes:{
+      clear:'Concrete, buildable offer clearly described.',
+      partial:'Offer type named but scope or form is unclear.',
+      gap:'Description too abstract to identify a concrete, buildable offer.'
+    }
+  }
+];
+
+function scoreApplicant(text){
+  const lower = text.toLowerCase();
+  return GATES.map(g=>{
+    const hits = g.signals.filter(s=>lower.includes(s)).length;
+    let status;
+    if(hits>=2) status='clear';
+    else if(hits===1) status='partial';
+    else status='gap';
+    return {name:g.name, status, note:g.notes[status]};
+  });
+}
+
+function weeksToOperational(results){
+  const map={clear:1,partial:0.5,gap:0};
+  const pct = results.reduce((s,r)=>s+map[r.status],0)/results.length;
+  if(pct>=0.75) return {label:'0–1 weeks to operational',cls:'score-ready',verdictCls:''};
+  if(pct>=0.4)  return {label:'2–3 weeks to operational',cls:'score-soon',verdictCls:'warn'};
+  return        {label:'3+ weeks to operational',cls:'score-far',verdictCls:'alert'};
+}
+
+function verdict(w){
+  if(w.cls==='score-ready') return 'This applicant could be operational on or near day one. Minimal setup tax expected.';
+  if(w.cls==='score-soon')  return 'Expect 2–3 weeks of setup before real acceleration can begin for this applicant.';
+  return 'This applicant is closer to a concept than a business. Budget 3+ weeks of cohort time on setup before this seat starts producing value.';
+}
+
+function renderCard(text, index){
+  const results = scoreApplicant(text);
+  const w = weeksToOperational(results);
+
+  const railSegs = results.map(r=>`<div class="rail-segment lit-${r.status}"></div>`).join('');
+  const gateLabels = results.map(r=>`<span>${r.name}</span>`).join('');
+  const gapItems = results.map(r=>`
+    <div class="gap-item">
+      <div class="gap-dot dot-${r.status}"></div>
+      <div class="gap-name">${r.name}</div>
+      <div class="gap-note">${r.note}</div>
+    </div>`).join('');
+
+  const displayName = text.trim().length > 48
+    ? text.trim().slice(0,46)+'…'
+    : text.trim();
+
+  return `
+    <div class="scorecard">
+      <div class="scorecard-header">
+        <h3>Applicant ${index+1}<br><small style="font-family:Inter,sans-serif;font-size:12px;font-style:normal;color:var(--ink-faint);font-weight:400;">${displayName}</small></h3>
+        <span class="score-badge ${w.cls}">${w.label}</span>
+      </div>
+      <div class="rail-wrap">
+        <div class="rail-label-row">${gateLabels}</div>
+        <div class="rail">${railSegs}</div>
+        <div class="weeks-line">${w.label}</div>
+      </div>
+      <div class="gaps">${gapItems}</div>
+      <div class="verdict ${w.verdictCls}">${verdict(w)}</div>
+    </div>`;
+}
+
+let applicantCount = 2;
+
+document.getElementById('addBtn').addEventListener('click',()=>{
+  applicantCount++;
+  const card = document.createElement('div');
+  card.className = 'applicant-card';
+  card.innerHTML = `
+    <label>Applicant ${applicantCount}</label>
+    <textarea class="applicant-input" placeholder="Paste applicant's business description here"></textarea>
+    <button class="remove-btn" title="Remove">×</button>`;
+  card.querySelector('.remove-btn').addEventListener('click',()=>card.remove());
+  document.getElementById('applicantGrid').appendChild(card);
+  card.querySelector('textarea').focus();
+});
+
+document.getElementById('clearBtn').addEventListener('click',()=>{
+  document.querySelectorAll('.applicant-input').forEach(t=>t.value='');
+  document.getElementById('resultsSection').innerHTML = `
+    <div class="empty">
+      <div class="icon">⟡</div>
+      <p>Add your shortlisted applicants above and click "Score this cohort" to see build-readiness results.</p>
+    </div>`;
+});
+
+document.getElementById('scoreBtn').addEventListener('click',()=>{
+  const inputs = Array.from(document.querySelectorAll('.applicant-input'))
+    .map(t=>t.value.trim()).filter(Boolean);
+  if(!inputs.length){
+    alert('Add at least one applicant description to score.');
+    return;
+  }
+  const cards = inputs.map((text,i)=>renderCard(text,i)).join('');
+  const section = document.getElementById('resultsSection');
+  section.innerHTML = `
+    <div class="results-head">
+      <h2>Readiness scorecard</h2>
+      <span class="results-meta">${inputs.length} applicant${inputs.length!==1?'s':''} scored</span>
+    </div>
+    <div class="cards-grid">${cards}</div>`;
+  section.scrollIntoView({behavior:'smooth',block:'start'});
+});
+</script>
+
+</body>
+</html>
